@@ -35,11 +35,16 @@ from opencensus.ext.grpc import server_interceptor
 from opencensus.common.transports.async_ import AsyncTransport
 from opencensus.trace import samplers
 
+from prometheus_client import start_http_server, Summary
+
 # import googleclouddebugger
 import googlecloudprofiler
 
 from logger import getJSONLogger
 logger = getJSONLogger('emailservice-server')
+
+# Create a metric to track time spent and requests made.
+REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
 # try:
 #     googleclouddebugger.enable(
@@ -113,6 +118,7 @@ class EmailService(BaseEmailService):
     return demo_pb2.Empty()
 
 class DummyEmailService(BaseEmailService):
+  @REQUEST_TIME.time()
   def SendOrderConfirmation(self, request, context):
     logger.info('A request to send order confirmation email to {} has been received.'.format(request.email))
     return demo_pb2.Empty()
@@ -138,6 +144,10 @@ def start(dummy_mode):
   logger.info("listening on port: "+port)
   server.add_insecure_port('[::]:'+port)
   server.start()
+
+  # metrics server
+  start_http_server(9800)
+
   try:
     while True:
       time.sleep(3600)

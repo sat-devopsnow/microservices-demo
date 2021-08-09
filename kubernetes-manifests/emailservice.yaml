@@ -32,6 +32,8 @@ spec:
         image: emailservice
         ports:
         - containerPort: 8080
+        - containerPort: 9800
+          name: metrics
         env:
         - name: PORT
           value: "8080"
@@ -67,3 +69,6 @@ spec:
   - name: grpc
     port: 5000
     targetPort: 8080
+  - name: prom
+    port: 9800
+    targetPort: metrics

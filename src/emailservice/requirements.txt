@@ -71,6 +71,7 @@ opencensus==0.7.11
     #   -r requirements.in
     #   opencensus-ext-grpc
     #   opencensus-ext-stackdriver
+prometheus_client==0.11.0
 protobuf==3.13.0
     # via
     #   google-api-core
